@@ -1,0 +1,8 @@
+default_provider = "keychain"
+
+[providers.keychain]
+type = "keychain"
+service = "fnox"
+
+[secrets]
+CF_TOKEN_ADMIN= { provider = "keychain", value = "synthomaha-voidflow-mint-tokens" }

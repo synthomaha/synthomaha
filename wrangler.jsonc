@@ -5,6 +5,9 @@
     // See https://github.com/SynthOmaha/synthomaha/issues/109
     "$schema": "node_modules/wrangler/config-schema.json",
     "name": "synthomaha",
+    // Pin the account so a wrangler login on another account can't deploy
+    // here (it held the synthnight.com route error, code 10082).
+    "account_id": "305f9a617cbd47585f6c122f9ca166d0",
     "compatibility_date": "2026-11-01",
     // Handles POST /api/signup (Turnstile + Resend); everything else is static.
     "main": "src/worker.ts",
@@ -28,11 +31,22 @@
                 "RESEND_FROM": "SynthOmaha <signup@synthnight.com>",
                 "TURNSTILE_HOSTNAMES": "synthnight.com, synthomaha.net"
             },
-            // Trial domain: synthomaha.net stays on Netlify until cutover.
+            // synthnight.com is the trial domain for Cloudflare; synthomaha.net
+            // stays on Netlify and is not routed here.
             // To roll back a bad deploy: `wrangler rollback --env prod`.
             // To release the domain, remove it from the Worker's Domains &
             // Routes in the dashboard as well as from this list.
             "routes": [{ "pattern": "synthnight.com", "custom_domain": true }]
+        },
+        // PR previews: Worker "synthomaha-preview", deployed by CI's preview
+        // job through voidflow's cloudflare-preview (`wrangler preview --env
+        // preview`). No routes and no secrets, so its deploy token has no
+        // rights on the prod Worker and a preview never mails the real inbox
+        // (signup there fails Turnstile verification and sends nothing).
+        // Create the Worker once before the first token apply:
+        // `bunx wrangler deploy --env preview`.
+        "preview": {
+            "previews": {}
         }
     }
 }

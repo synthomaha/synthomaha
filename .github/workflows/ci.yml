@@ -5,18 +5,97 @@ on:
         branches: [main]
     pull_request:
         branches: [main]
-        types: [opened, synchronize, reopened, ready_for_review]
+        # closed: the preview job deletes the PR's Preview.
+        types: [opened, synchronize, reopened, ready_for_review, closed]
     workflow_dispatch:
 
+# Jobs that comment on PRs (preview) ask for pull-requests: write themselves.
 permissions:
     contents: read
-    pull-requests: write
+    pull-requests: read
 
 jobs:
     validate:
-        uses: taraxvoid/voidflow/.github/workflows/site-ci.yml@5693c9455d52f7fa419ff4be747c218bac3814f8 # v0.16.0
-        with:
-            single-environment: true
+        if: github.event.action != 'closed'
+        uses: taraxvoid/voidflow/.github/workflows/site-ci.yml@d8cdecab3c078a93da1afa75fc9a94dd5605a1f6 # v1.0.0-next.9
+
+    # PR previews on the separate synthomaha-preview Worker (wrangler.jsonc
+    # env.preview), so the preview environment's token has no rights on prod.
+    # Forks get no secrets, so only same-repo PRs. On close, deletes the
+    # Preview without building.
+    preview:
+        environment: preview
+        name: Preview (Cloudflare)
+        needs: validate
+        if: >-
+            !cancelled()
+            && github.event_name == 'pull_request'
+            && github.event.pull_request.head.repo.full_name == github.repository
+            && (github.event.action == 'closed' || needs.validate.result == 'success')
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        permissions:
+            contents: read
+            pull-requests: write
+        concurrency:
+            group: preview-${{ github.event.pull_request.number }}
+            cancel-in-progress: true
+        steps:
+            # validate runs outside this job's concurrency group, so a run
+            # whose validate was slow can reach here after a newer push
+            # deployed, or after the PR closed and its Preview was deleted.
+            # Deploy only while the PR is open at this run's head.
+            - name: Skip if the PR moved on
+              id: pr
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  REPO: ${{ github.repository }}
+                  PR: ${{ github.event.pull_request.number }}
+                  SHA: ${{ github.event.pull_request.head.sha }}
+                  ACTION: ${{ github.event.action }}
+              run: |
+                  if [ "$ACTION" = closed ]; then
+                      echo "deploy=false" >> "$GITHUB_OUTPUT"
+                      exit 0
+                  fi
+                  now=$(gh api "repos/$REPO/pulls/$PR" --jq '.state + " " + .head.sha')
+                  if [ "$now" = "open $SHA" ]; then
+                      echo "deploy=true" >> "$GITHUB_OUTPUT"
+                  else
+                      echo "::notice::PR #$PR is now '$now', not 'open $SHA'; skipping a stale preview."
+                      echo "deploy=false" >> "$GITHUB_OUTPUT"
+                  fi
+
+            - if: steps.pr.outputs.deploy == 'true' || github.event.action == 'closed'
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
+
+            - if: steps.pr.outputs.deploy == 'true'
+              uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+              with:
+                  bun-version-file: .bun-version
+
+            - if: steps.pr.outputs.deploy == 'true'
+              uses: taraxvoid/voidflow/actions/bun-install@d8cdecab3c078a93da1afa75fc9a94dd5605a1f6 # v1.0.0-next.9
+
+            # Turnstile's public always-pass test site key, so the preview
+            # renders the Worker signup form. The preview Worker has no
+            # Turnstile secret or Resend key, so a signup there sends nothing.
+            - if: steps.pr.outputs.deploy == 'true'
+              name: Build
+              run: bun run build
+              env:
+                  PUBLIC_TURNSTILE_SITE_KEY: 1x00000000000000000000AA
+
+            - if: steps.pr.outputs.deploy == 'true' || github.event.action == 'closed'
+              uses: taraxvoid/voidflow/actions/cloudflare-preview@d8cdecab3c078a93da1afa75fc9a94dd5605a1f6 # v1.0.0-next.9
+              with:
+                  env: preview
+                  cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  cloudflare-account-id: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+                  github-token: ${{ github.token }}
+                  delete: ${{ github.event.action == 'closed' }}
 
     # Cloudflare Worker deploy (trial on synthnight.com, see #109).
     # synthomaha.net is still built and served by Netlify's git integration.
@@ -41,7 +120,7 @@ jobs:
               with:
                   bun-version-file: .bun-version
 
-            - uses: taraxvoid/voidflow/actions/bun-install@5693c9455d52f7fa419ff4be747c218bac3814f8 # v0.16.0
+            - uses: taraxvoid/voidflow/actions/bun-install@d8cdecab3c078a93da1afa75fc9a94dd5605a1f6 # v1.0.0-next.9
 
             # The site key is public. Setting it switches the signup form from
             # Netlify Forms to the Worker's /api/signup behind Turnstile.
@@ -62,9 +141,7 @@ jobs:
                   PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.TURNSTILE_SITE_KEY }}
 
             - id: env
-              uses: taraxvoid/voidflow/actions/branch-env-map@5693c9455d52f7fa419ff4be747c218bac3814f8 # v0.16.0
-              with:
-                  single-environment: "true"
+              uses: taraxvoid/voidflow/actions/branch-env-map@d8cdecab3c078a93da1afa75fc9a94dd5605a1f6 # v1.0.0-next.9
 
             # A slow validate for an older push can finish after a newer push
             # deployed; deploying it then would roll production back.
@@ -84,7 +161,7 @@ jobs:
                   fi
 
             - if: steps.head.outputs.current == 'true'
-              uses: taraxvoid/voidflow/actions/cloudflare-deploy@5693c9455d52f7fa419ff4be747c218bac3814f8 # v0.16.0
+              uses: taraxvoid/voidflow/actions/cloudflare-deploy@d8cdecab3c078a93da1afa75fc9a94dd5605a1f6 # v1.0.0-next.9
               with:
                   env: ${{ steps.env.outputs.env }}
                   cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
