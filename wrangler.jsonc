@@ -31,7 +31,8 @@
                 "RESEND_FROM": "SynthOmaha <signup@synthnight.com>",
                 "TURNSTILE_HOSTNAMES": "synthnight.com, synthomaha.net"
             },
-            // Trial domain: synthomaha.net stays on Netlify until cutover.
+            // synthnight.com is the trial domain for Cloudflare; synthomaha.net
+            // stays on Netlify and is not routed here.
             // To roll back a bad deploy: `wrangler rollback --env prod`.
             // To release the domain, remove it from the Worker's Domains &
             // Routes in the dashboard as well as from this list.

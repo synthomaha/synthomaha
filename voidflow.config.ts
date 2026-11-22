@@ -16,9 +16,5 @@ export default {
             // env.preview's Worker (synthomaha-preview), no zones.
             { env: 'preview', zones: [] },
         ],
-        // The pre-voidflow deploy token. The fleet config keyed this repo as
-        // synthomaha/synthomaha.net; add any voidflow:synthomaha/synthomaha.net:*
-        // tokens `voidflow plan tokens` reports.
-        retire: ['synthomaha-deploys-worker'],
     },
 } satisfies VoidflowConfig
