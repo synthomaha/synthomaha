@@ -5,6 +5,9 @@
     // See https://github.com/SynthOmaha/synthomaha/issues/109
     "$schema": "node_modules/wrangler/config-schema.json",
     "name": "synthomaha",
+    // Pin the account so a wrangler login on another account can't deploy
+    // here (it held the synthnight.com route error, code 10082).
+    "account_id": "305f9a617cbd47585f6c122f9ca166d0",
     "compatibility_date": "2026-11-01",
     // Handles POST /api/signup (Turnstile + Resend); everything else is static.
     "main": "src/worker.ts",
