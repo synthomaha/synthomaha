@@ -33,6 +33,16 @@
             // To release the domain, remove it from the Worker's Domains &
             // Routes in the dashboard as well as from this list.
             "routes": [{ "pattern": "synthnight.com", "custom_domain": true }]
+        },
+        // PR previews: Worker "synthomaha-preview", deployed by CI's preview
+        // job through voidflow's cloudflare-preview (`wrangler preview --env
+        // preview`). No routes and no secrets, so its deploy token has no
+        // rights on the prod Worker and a preview never mails the real inbox
+        // (signup there fails Turnstile verification and sends nothing).
+        // Create the Worker once before the first token apply:
+        // `bunx wrangler deploy --env preview`.
+        "preview": {
+            "previews": {}
         }
     }
 }
