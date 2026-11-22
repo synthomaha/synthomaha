@@ -41,7 +41,8 @@
         "test:e2e:a11y": "bun run build && playwright test test/e2e/a11y.spec.js --project=mobile-chrome",
         "test:e2e:lighthouse": "bun run build && unlighthouse-runner --dir dist",
         "audit": "bun audit --audit-level high --production",
-        "check:licenses": "check-licenses"
+        "check:licenses": "check-licenses",
+        "check:voidflow": "voidflow check"
     },
     "engines": {
         "bun": ">=1.4.0"
@@ -71,7 +72,7 @@
         "@biomejs/biome": "^2.6.7",
         "@lizenz/checker": "^0.0.2",
         "@playwright/test": "^1.65.0",
-        "@taraxvoid/voidflow": "^0.16.0",
+        "@taraxvoid/voidflow": "1.0.0-next.9",
         "@types/blobshape": "^1.0.3",
         "@types/node": "^24.19.2",
         "@types/react": "^19.3.0",

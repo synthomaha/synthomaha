@@ -14,9 +14,7 @@ permissions:
 
 jobs:
     validate:
-        uses: taraxvoid/voidflow/.github/workflows/site-ci.yml@5693c9455d52f7fa419ff4be747c218bac3814f8 # v0.16.0
-        with:
-            single-environment: true
+        uses: taraxvoid/voidflow/.github/workflows/site-ci.yml@d8cdecab3c078a93da1afa75fc9a94dd5605a1f6 # v1.0.0-next.9
 
     # Cloudflare Worker deploy (trial on synthnight.com, see #109).
     # synthomaha.net is still built and served by Netlify's git integration.
@@ -41,7 +39,7 @@ jobs:
               with:
                   bun-version-file: .bun-version
 
-            - uses: taraxvoid/voidflow/actions/bun-install@5693c9455d52f7fa419ff4be747c218bac3814f8 # v0.16.0
+            - uses: taraxvoid/voidflow/actions/bun-install@d8cdecab3c078a93da1afa75fc9a94dd5605a1f6 # v1.0.0-next.9
 
             # The site key is public. Setting it switches the signup form from
             # Netlify Forms to the Worker's /api/signup behind Turnstile.
@@ -62,9 +60,7 @@ jobs:
                   PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.TURNSTILE_SITE_KEY }}
 
             - id: env
-              uses: taraxvoid/voidflow/actions/branch-env-map@5693c9455d52f7fa419ff4be747c218bac3814f8 # v0.16.0
-              with:
-                  single-environment: "true"
+              uses: taraxvoid/voidflow/actions/branch-env-map@d8cdecab3c078a93da1afa75fc9a94dd5605a1f6 # v1.0.0-next.9
 
             # A slow validate for an older push can finish after a newer push
             # deployed; deploying it then would roll production back.
@@ -84,7 +80,7 @@ jobs:
                   fi
 
             - if: steps.head.outputs.current == 'true'
-              uses: taraxvoid/voidflow/actions/cloudflare-deploy@5693c9455d52f7fa419ff4be747c218bac3814f8 # v0.16.0
+              uses: taraxvoid/voidflow/actions/cloudflare-deploy@d8cdecab3c078a93da1afa75fc9a94dd5605a1f6 # v1.0.0-next.9
               with:
                   env: ${{ steps.env.outputs.env }}
                   cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
