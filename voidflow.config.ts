@@ -14,7 +14,9 @@ export default {
             // The prod Worker and synthnight.com from wrangler.jsonc env.prod.
             { env: 'prod' },
             // env.preview's Worker (synthomaha-preview), no zones.
-            { env: 'preview', zones: [] },
+            // `worker` is explicit because voidflow reads wrangler.jsonc from
+            // the repo's default branch, which has no env.preview until merge.
+            { env: 'preview', worker: 'synthomaha-preview', zones: [] },
         ],
     },
 } satisfies VoidflowConfig
