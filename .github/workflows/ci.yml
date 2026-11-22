@@ -9,9 +9,10 @@ on:
         types: [opened, synchronize, reopened, ready_for_review, closed]
     workflow_dispatch:
 
+# Jobs that comment on PRs (preview) ask for pull-requests: write themselves.
 permissions:
     contents: read
-    pull-requests: write
+    pull-requests: read
 
 jobs:
     validate:
