@@ -5,7 +5,7 @@ type = "keychain"
 service = "fnox"
 
 [secrets]
-CF_TOKEN_ADMIN = { provider = "cf-admin", value = "synthomaha-voidflow-mint-tokens" }
+CF_TOKEN_ADMIN = { provider = "cf-admin", value = "synthomaha-voidflow-mint-tokens", env=false }
 
 [proxy]
 egress = "permissive" # voidflow also calls gh; the admin token stays in the proxy
