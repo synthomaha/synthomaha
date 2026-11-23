@@ -29,7 +29,7 @@
         "@biomejs/biome": "^2.6.7",
         "@lizenz/checker": "^0.0.2",
         "@playwright/test": "^1.65.0",
-        "@taraxvoid/voidflow": "1.0.0-next.9",
+        "@taraxvoid/voidflow": "^1.2.1",
         "@types/blobshape": "^1.0.3",
         "@types/node": "^24.19.2",
         "@types/react": "^19.3.0",
@@ -541,7 +541,7 @@
 
     "@tailwindcss/vite": ["@tailwindcss/vite@4.3.5", "", { "dependencies": { "@tailwindcss/node": "4.3.5", "@tailwindcss/oxide": "4.3.5", "tailwindcss": "4.3.5" }, "peerDependencies": { "vite": "^5.2.0 || ^6 || ^7 || ^8" } }, "sha512-BCNiY0a1ZjdOHVqw7kyb7U72BwfMF3dfUuN+tQsLWky/J5JOI/r7abibglXfygrZhVO/3u3V+E25kkKTeMkXaQ=="],
 
-    "@taraxvoid/voidflow": ["@taraxvoid/voidflow@1.0.0-next.9", "", { "dependencies": { "license-checker-rseidelsohn": "5.0.1" }, "peerDependencies": { "@playwright/test": ">=1.40" }, "optionalPeers": ["@playwright/test"], "bin": { "voidflow": "dist/scripts/cli.js", "deps-signals": "scripts/deps-signals.ts", "check-licenses": "scripts/check-licenses.ts", "unlighthouse-runner": "scripts/unlighthouse/run.ts" } }, "sha512-zE9UT/Au5QMaV+H7hhv5/CTuDyL4SY8FAHP5fPelbIAas16TrDWewz2ZTaRNSGDNA9sXwJwO4gdFeTp5jtaIJQ=="],
+    "@taraxvoid/voidflow": ["@taraxvoid/voidflow@1.2.1", "", { "dependencies": { "jsonc-parser": "3.3.1", "license-checker-rseidelsohn": "5.0.1", "smol-toml": "1.9.1" }, "peerDependencies": { "@playwright/test": ">=1.40" }, "optionalPeers": ["@playwright/test"], "bin": { "voidflow": "dist/scripts/cli.js", "deps-signals": "scripts/deps-signals.ts", "check-licenses": "scripts/check-licenses.ts", "unlighthouse-runner": "scripts/unlighthouse/run.ts" } }, "sha512-Z3s9gsJY9W/AQ5K8LxqIl4cjG0ngfnaBFvX1gtEA7GMS5v8rtTtCyGKhg1LZbjkROsd2x1EY/BCzJUtHW7XQwQ=="],
 
     "@tufjs/canonical-json": ["@tufjs/canonical-json@2.0.0", "", {}, "sha512-yVtV8zsdo8qFHe+/3kw81dSLyF7D576A5cCFCi4X7B39tWT7SekaEFUnvnWJHz+9qO7qJTah1JbrDjWKqFtdWA=="],
 
