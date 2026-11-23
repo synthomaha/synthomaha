@@ -1,8 +1,18 @@
-default_provider = "keychain"
+default_provider = "cf-admin"
 
-[providers.keychain]
+[providers.cf-admin]
 type = "keychain"
 service = "fnox"
 
 [secrets]
-CF_TOKEN_ADMIN= { provider = "keychain", value = "synthomaha-voidflow-mint-tokens" }
+CF_TOKEN_ADMIN = { provider = "cf-admin", value = "synthomaha-voidflow-mint-tokens" }
+
+[proxy]
+egress = "permissive" # voidflow also calls gh; the admin token stays in the proxy
+
+[[proxy.rules]]
+secret = "CF_TOKEN_ADMIN"
+domain = "api.cloudflare.com"
+header = "authorization"
+methods = ["GET", "POST", "PUT", "DELETE"]
+paths = ["/client/v4/**"]
