@@ -49,3 +49,6 @@ npm-debug.log*
 # TypeScript
 *.tsbuildinfo
 .unlighthouse/
+
+# fnox local overrides (YubiKey provider)
+fnox.local.toml
