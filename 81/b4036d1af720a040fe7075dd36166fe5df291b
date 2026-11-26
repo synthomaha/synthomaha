@@ -1,0 +1,27 @@
+package.json
+  s_b2e7007d0153b9::t_d4b5a5f3f496c9 75
+.github/workflows/voidflow-drift.yml
+  s_b2e7007d0153b9::t_9f561643b1a698 1-22
+lefthook.yml
+  s_b2e7007d0153b9::t_d4b5a5f3f496c9 7
+.github/workflows/ci.yml
+  s_b2e7007d0153b9::t_d4b5a5f3f496c9 20,80,92,123,144,164
+bun.lock
+  s_b2e7007d0153b9::t_6431401f116b8f 32,544
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "81b4036d1af720a040fe7075dd36166fe5df291b",
+  "prompts": {},
+  "sessions": {
+    "s_b2e7007d0153b9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2b69cc20-8dd9-42a9-8dc3-d40c2c954081",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "void <1711810+taraxvoid@users.noreply.github.com>"
+    }
+  }
+}
