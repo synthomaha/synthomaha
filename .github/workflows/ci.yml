@@ -17,7 +17,7 @@ permissions:
 jobs:
     validate:
         if: github.event.action != 'closed'
-        uses: taraxvoid/voidflow/.github/workflows/site-ci.yml@d8cdecab3c078a93da1afa75fc9a94dd5605a1f6 # v1.0.0-next.9
+        uses: taraxvoid/voidflow/.github/workflows/site-ci.yml@6debbf253b3514375d712af47d1007546bd7b79a # v1.5.0
 
     # PR previews on the separate synthomaha-preview Worker (wrangler.jsonc
     # env.preview), so the preview environment's token has no rights on prod.
@@ -77,7 +77,7 @@ jobs:
                   bun-version-file: .bun-version
 
             - if: steps.pr.outputs.deploy == 'true'
-              uses: taraxvoid/voidflow/actions/bun-install@d8cdecab3c078a93da1afa75fc9a94dd5605a1f6 # v1.0.0-next.9
+              uses: taraxvoid/voidflow/actions/bun-install@6debbf253b3514375d712af47d1007546bd7b79a # v1.5.0
 
             # Turnstile's public always-pass test site key, so the preview
             # renders the Worker signup form. The preview Worker has no
@@ -89,7 +89,7 @@ jobs:
                   PUBLIC_TURNSTILE_SITE_KEY: 1x00000000000000000000AA
 
             - if: steps.pr.outputs.deploy == 'true' || github.event.action == 'closed'
-              uses: taraxvoid/voidflow/actions/cloudflare-preview@d8cdecab3c078a93da1afa75fc9a94dd5605a1f6 # v1.0.0-next.9
+              uses: taraxvoid/voidflow/actions/cloudflare-preview@6debbf253b3514375d712af47d1007546bd7b79a # v1.5.0
               with:
                   env: preview
                   cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -120,7 +120,7 @@ jobs:
               with:
                   bun-version-file: .bun-version
 
-            - uses: taraxvoid/voidflow/actions/bun-install@d8cdecab3c078a93da1afa75fc9a94dd5605a1f6 # v1.0.0-next.9
+            - uses: taraxvoid/voidflow/actions/bun-install@6debbf253b3514375d712af47d1007546bd7b79a # v1.5.0
 
             # The site key is public. Setting it switches the signup form from
             # Netlify Forms to the Worker's /api/signup behind Turnstile.
@@ -141,7 +141,7 @@ jobs:
                   PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.TURNSTILE_SITE_KEY }}
 
             - id: env
-              uses: taraxvoid/voidflow/actions/branch-env-map@d8cdecab3c078a93da1afa75fc9a94dd5605a1f6 # v1.0.0-next.9
+              uses: taraxvoid/voidflow/actions/branch-env-map@6debbf253b3514375d712af47d1007546bd7b79a # v1.5.0
 
             # A slow validate for an older push can finish after a newer push
             # deployed; deploying it then would roll production back.
@@ -161,7 +161,7 @@ jobs:
                   fi
 
             - if: steps.head.outputs.current == 'true'
-              uses: taraxvoid/voidflow/actions/cloudflare-deploy@d8cdecab3c078a93da1afa75fc9a94dd5605a1f6 # v1.0.0-next.9
+              uses: taraxvoid/voidflow/actions/cloudflare-deploy@6debbf253b3514375d712af47d1007546bd7b79a # v1.5.0
               with:
                   env: ${{ steps.env.outputs.env }}
                   cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
