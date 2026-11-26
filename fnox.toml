@@ -1,14 +1,29 @@
-default_provider = "cf-admin"
+# TRIAL - using a gitignored fnox.local.toml to provide FIDO via yubikey to run commands 
+
+# Secrets the repo tooling needs, declared without their values (fnox:
+# https://github.com/jdx/fnox, installed by mise). `cf-admin` defaults to the
+# macOS Keychain; to use another backend (age, a password manager...), redefine
+# [providers.cf-admin] in a gitignored fnox.local.toml. See CONTRIBUTING.md
+# "Cloudflare deploy tokens as code". Nothing here is secret.
 
 [providers.cf-admin]
 type = "keychain"
 service = "fnox"
 
 [secrets]
-CF_TOKEN_ADMIN = { provider = "cf-admin", value = "synthomaha-voidflow-mint-tokens", env=false }
+# env = false: the shell hook and `fnox exec` leave it out, so it reaches no
+# shell; only `fnox proxy run` (below) resolves it.
+CF_TOKEN_ADMIN= { provider = "cf-admin", value = "QsU+cXWCBCslwnFc5yEanrgH8OlZeWSCBjlf80bm07etBe/UT32wZJPL5KO+jTCCxpbd37hpufBCJYFqgdRQDf8Q3jBdjkEoFSR005KWewNn", env = false }
 
+# `fnox proxy run -- bun run voidflow plan|apply tokens` hands voidflow a
+# placeholder for CF_TOKEN_ADMIN and puts the real token into the
+# Authorization header only on Cloudflare API calls, so the bun process and its
+# dependencies never see it. Egress is strict: other hosts are refused, except
+# api.github.com (the verbs call gh), which gets an uninspected tunnel and no
+# secret. This only binds clients that honor HTTPS_PROXY.
 [proxy]
-egress = "permissive" # voidflow also calls gh; the admin token stays in the proxy
+egress = "strict"
+allow_domains = ["api.github.com"]
 
 [[proxy.rules]]
 secret = "CF_TOKEN_ADMIN"
